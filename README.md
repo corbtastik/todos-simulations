@@ -13,3 +13,7 @@ The Microservice being called must support Todo CRUD ops.
   -DTODOS_API_ENDPOINT=http://localhost:8009 \
   -DTODOS_API_USERS=100
 ```
+
+### References
+
+1. [Gatling](https://gatling.io/)
