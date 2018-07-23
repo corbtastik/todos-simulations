@@ -70,9 +70,7 @@ class TodosSimulation extends Simulation {
 
   val endpoint: String = System.getProperty("TODOS_API_ENDPOINT", "http://localhost:8009")
   val numberOfUsers: Int = System.getProperty("TODOS_API_USERS", "1").toInt
-  val repeatTimes: Int = System.getProperty("TODOS_API_REPEAT", "1").toInt
-  val pause: FiniteDuration = System.getProperty("TODOS_API_PAUSE", "1").toInt.millisecond
-  val maxDuration: FiniteDuration = 1.minute
+  val pause: FiniteDuration = System.getProperty("TODOS_API_PAUSE", "10").toInt.millisecond
   val httpConf: Protocol = http
     .baseURL(endpoint)
     .acceptHeader("application/json")
@@ -94,5 +92,4 @@ class TodosSimulation extends Simulation {
       .pause(pause)
       .inject(rampUsers(numberOfUsers).over(30 seconds))
   ).protocols(httpConf)
-    .maxDuration(maxDuration)
 }
