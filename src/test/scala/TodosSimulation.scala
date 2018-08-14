@@ -15,13 +15,13 @@ object Requests {
 
   val retrieveTodos: ChainBuilder = exec(
     http("retrieve-todos")
-      .get("/")
+      .get("/todos/")
       .check(status.is(200))
   )
 
   val createTodo: ChainBuilder = exec(
     http("create-todo")
-      .post("/")
+      .post("/todos/")
       .body(StringBody(
         s"""
            | {
@@ -34,20 +34,20 @@ object Requests {
 
   val retrieveTodo: ChainBuilder = exec(
     http("retrieve-todo")
-      .get("/${todo_id}")
+      .get("/todos/${todo_id}")
       .check(status.is(200))
   )
 
   val updateTodo: ChainBuilder = exec(
     http("update-todo")
-      .patch("/${todo_id}")
+      .patch("/todos/${todo_id}")
       .body(StringBody("{\"id\": \"${todo_id}\", \"title\": \"UPDATED howdy todo ${todo_id}\", \"completed\": true }"))
       .check(status.is(200))
   )
 
   val retrieveUpdatedTodo: ChainBuilder = exec(
     http("retrieve-updated-todo")
-      .get("/${todo_id}")
+      .get("/todos/${todo_id}")
       .check(status.is(200))
       .check(jsonPath("$.id").is("${todo_id}"))
       .check(jsonPath("$.completed").is("true"))
@@ -55,13 +55,13 @@ object Requests {
 
   val deleteTodo: ChainBuilder = exec(
     http("delete-todo")
-      .delete("/${todo_id}")
+      .delete("/todos/${todo_id}")
       .check(status.is(200))
   )
 
   val retrieveTodo404: ChainBuilder = exec(
     http("retrieve-todo-404")
-      .get("/${todo_id}")
+      .get("/todos/${todo_id}")
       .check(status.not(200))
   )
 }
