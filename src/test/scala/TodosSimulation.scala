@@ -15,13 +15,13 @@ object Requests {
 
   val retrieveTodos: ChainBuilder = exec(
     http("retrieve-todos")
-      .get("/todos/")
+      .get("/")
       .check(status.is(200))
   )
 
   val createTodo: ChainBuilder = exec(
     http("create-todo")
-      .post("/todos/")
+      .post("/")
       .body(StringBody(
         s"""
            | {
@@ -34,20 +34,20 @@ object Requests {
 
   val retrieveTodo: ChainBuilder = exec(
     http("retrieve-todo")
-      .get("/todos/${todo_id}")
+      .get("/${todo_id}")
       .check(status.is(200))
   )
 
   val updateTodo: ChainBuilder = exec(
     http("update-todo")
-      .patch("/todos/${todo_id}")
+      .patch("/${todo_id}")
       .body(StringBody("{\"id\": \"${todo_id}\", \"title\": \"UPDATED howdy todo ${todo_id}\", \"completed\": true }"))
       .check(status.is(200))
   )
 
   val retrieveUpdatedTodo: ChainBuilder = exec(
     http("retrieve-updated-todo")
-      .get("/todos/${todo_id}")
+      .get("/${todo_id}")
       .check(status.is(200))
       .check(jsonPath("$.id").is("${todo_id}"))
       .check(jsonPath("$.completed").is("true"))
@@ -55,22 +55,22 @@ object Requests {
 
   val deleteTodo: ChainBuilder = exec(
     http("delete-todo")
-      .delete("/todos/${todo_id}")
+      .delete("/${todo_id}")
       .check(status.is(200))
   )
 
-  val retrieveTodo404: ChainBuilder = exec(
-    http("retrieve-todo-404")
-      .get("/todos/${todo_id}")
-      .check(status.not(200))
-  )
+//  val retrieveTodo404: ChainBuilder = exec(
+//    http("retrieve-todo-404")
+//      .get("/${todo_id}")
+//      .check(status.not(200))
+//  )
 }
 
 class TodosSimulation extends Simulation {
 
   val endpoint: String = System.getProperty("TODOS_API_ENDPOINT", "http://localhost:8009")
   val numberOfUsers: Int = System.getProperty("TODOS_API_USERS", "1").toInt
-  val pause: FiniteDuration = System.getProperty("TODOS_API_PAUSE", "10").toInt.millisecond
+  val pause: FiniteDuration = System.getProperty("TODOS_API_PAUSE", "0").toInt.millisecond
   val httpConf: Protocol = http
     .baseURL(endpoint)
     .acceptHeader("application/json")
@@ -88,8 +88,8 @@ class TodosSimulation extends Simulation {
       .pause(pause)
       .exec(Requests.deleteTodo)
       .pause(pause)
-      .exec(Requests.retrieveTodo404)
-      .pause(pause)
+//      .exec(Requests.retrieveTodo404)
+//      .pause(pause)
       .inject(rampUsers(numberOfUsers).over(30 seconds))
   ).protocols(httpConf)
 }
